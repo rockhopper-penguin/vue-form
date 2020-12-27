@@ -18,8 +18,14 @@
     </div>
     <div class="block">
       <p>JSON to array</p>
-      <div v-for="index in toArray" :key="index">
-        <input type="text" :value="index" @change="onChange" />
+      <div v-for="index in toArrayForms" :key="index">
+        <input type="text" v-model="toArray[index - 1]" @change="onChange" />
+        <span v-if="index == 1">
+          <button @click="addForms">+</button>
+        </span>
+        <span v-else>
+          <button @click="removeForms(index - 1)">-</button>
+        </span>
       </div>
     </div>
   </div>
@@ -52,6 +58,8 @@ export default class HelloWorld extends Vue {
   toJson = JSON.stringify(this.array);
   // JSONから配列に変換
   toArray = JSON.parse(this.toJson);
+  // JSONから配列に変換した場合のフォーム数
+  toArrayForms = this.toArray.length == 0 ? 1 : this.toArray.length;
 
   addForms() {
     // 直近の要素が空出ない場合、インプットボックスを追加
@@ -67,8 +75,9 @@ export default class HelloWorld extends Vue {
     this.onChange();
   }
 
-  // @Watch("array")
+  @Watch("array")
   onChange() {
+    this.toArrayForms = this.toArray.length;
     // JSONに変換
     this.toJson = JSON.stringify(this.array);
     // JSONから配列に変換
