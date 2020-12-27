@@ -8,7 +8,7 @@
           <button @click="addForms">+</button>
         </span>
         <span v-else>
-          <button @click="removeForms">-</button>
+          <button @click="removeForms(index - 1)">-</button>
         </span>
       </div>
     </div>
@@ -19,7 +19,7 @@
     <div class="block">
       <p>JSON to array</p>
       <div v-for="index in toArray" :key="index">
-        <input type="text" :value="index" />
+        <input type="text" :value="index" @change="onChange" />
       </div>
     </div>
   </div>
@@ -54,16 +54,21 @@ export default class HelloWorld extends Vue {
   toArray = JSON.parse(this.toJson);
 
   addForms() {
-    this.forms++;
+    // 直近の要素が空出ない場合、インプットボックスを追加
+    if (this.array[this.forms - 1]) {
+      this.forms++;
+      this.onChange();
+    }
   }
 
-  removeForms() {
+  removeForms(deleteId: number) {
     this.forms--;
+    this.array.splice(deleteId, 1);
+    this.onChange();
   }
 
   // @Watch("array")
   onChange() {
-    console.log("配列の中身が変更！！！");
     // JSONに変換
     this.toJson = JSON.stringify(this.array);
     // JSONから配列に変換
